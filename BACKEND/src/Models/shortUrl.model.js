@@ -16,12 +16,12 @@ const shortUrlSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
-    user :{
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-
+        default: null
     }
-});
+}, { timestamps: true });
 
 const ShortUrl = mongoose.model('ShortUrl', shortUrlSchema);
 

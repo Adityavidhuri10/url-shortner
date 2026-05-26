@@ -24,3 +24,11 @@ export const getShortUrl = async (shortUrl) => {
 export const findShortUrlByCode = async (shortUrl) => {
     return await ShortUrl.findOne({ short_url: shortUrl }).exec();
 };
+
+export const findShortUrlsByUser = async (userId) => {
+    return await ShortUrl.find({ user: userId }).sort({ createdAt: -1 }).exec();
+};
+
+export const deleteShortUrlById = async (id, userId) => {
+    return await ShortUrl.findOneAndDelete({ _id: id, user: userId }).exec();
+};

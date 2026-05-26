@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const AuthPage = () => {
+const AuthPage = ({ setView }) => {
     const { login, register } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     
@@ -60,6 +60,18 @@ const AuthPage = () => {
         <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 relative font-sans">
             {/* Pristine Modern Light Card */}
             <div className="w-full max-w-md bg-white border border-zinc-200/80 p-8 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] relative z-10 transition-all duration-300">
+                {/* Back Navigation Trigger */}
+                {setView && (
+                  <button
+                    onClick={() => setView("landing")}
+                    className="absolute top-6 left-6 text-zinc-400 hover:text-zinc-700 transition flex items-center gap-1 text-xs font-semibold cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back
+                  </button>
+                )}
                 
                 {/* Header Section */}
                 <div className="text-center mb-8">
@@ -69,7 +81,7 @@ const AuthPage = () => {
                         </svg>
                     </div>
                     <h2 className="text-xl font-bold text-zinc-900 tracking-tight">
-                        {isLogin ? "Welcome to shortify" : "Create your account"}
+                        {isLogin ? "Welcome to snapUrl" : "Create your account"}
                     </h2>
                     <p className="text-xs text-zinc-500 mt-1.5 font-medium">
                         {isLogin ? "Enter your details to manage your links" : "Get started with clean, stateless URL shortening"}

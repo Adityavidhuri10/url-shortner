@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
-import HomePage from "./pages/HomePage.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
+import DashboardPage from "./pages/DashboardPage.jsx";
 
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
+  const [currentView, setCurrentView] = useState("landing");
 
   // Premium loading splash screen for cold session mounts
   if (loading) {
@@ -19,7 +21,7 @@ const AppContent = () => {
             </svg>
           </div>
           <div className="text-center">
-            <p className="text-base font-semibold text-zinc-900 tracking-tight">shortify.</p>
+            <p className="text-base font-semibold text-zinc-900 tracking-tight">snapUrl</p>
             <p className="text-xs text-zinc-400 font-medium mt-1">Initializing secure session</p>
           </div>
         </div>
@@ -27,8 +29,16 @@ const AppContent = () => {
     );
   }
 
-  // Session authentication guard
-  return isAuthenticated ? <HomePage /> : <AuthPage />;
+  // Dynamic Routing Logic based on Authentication and View States
+  if (isAuthenticated) {
+    return <DashboardPage />;
+  }
+
+  return currentView === "auth" ? (
+    <AuthPage setView={setCurrentView} />
+  ) : (
+    <LandingPage setView={setCurrentView} />
+  );
 };
 
 const App = () => {

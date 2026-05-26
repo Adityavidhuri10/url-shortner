@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { createShortUrl } from "../api/shortUrl.api.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
-const UrlForm = () => {
+const UrlForm = ({ onSuccess }) => {
   const [url, setUrl] = useState("https://www.google.com");
+  const [customSlug, setCustomSlug] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { isAuthenticated } = useAuth();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("handleSubmit triggered! Input URL:", url);
+    console.log("handleSubmit triggered! Input URL:", url, "Custom Slug:", customSlug);
 
     setLoading(true);
     setError("");
@@ -19,11 +23,15 @@ const UrlForm = () => {
     try {
       console.log("Sending request to backend via createShortUrl...");
 
-      const response = await createShortUrl(url);
+      const response = await createShortUrl(url, isAuthenticated ? customSlug : "");
 
       console.log("Received response from backend:", response);
 
       setShortUrl(response);
+      setCustomSlug(""); // Clear slug input on successful creation
+      if (onSuccess) {
+        onSuccess();
+      }
 
     } catch (error) {
       console.error("Error inside handleSubmit:", error);
@@ -75,6 +83,38 @@ const UrlForm = () => {
           className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-zinc-900 text-sm placeholder-zinc-400 transition-all duration-200 outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-100"
         />
       </div>
+
+      {/* Conditional Rendering based on Authentication State for Custom Slug */}
+      {isAuthenticated ? (
+        <div>
+          <label
+            htmlFor="customSlug"
+            className="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5"
+          >
+            Custom Slug (Optional)
+          </label>
+
+          <input
+            id="customSlug"
+            type="text"
+            value={customSlug}
+            onChange={(event) => setCustomSlug(event.target.value)}
+            placeholder="Enter custom slug (optional)"
+            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-zinc-900 text-sm placeholder-zinc-400 transition-all duration-200 outline-none focus:border-zinc-950 focus:ring-2 focus:ring-zinc-100"
+          />
+
+          <p className="text-[10px] text-zinc-400 font-medium mt-1">
+            Custom links available for logged-in users.
+          </p>
+        </div>
+      ) : (
+        <div className="p-3 rounded-xl bg-zinc-100/50 border border-zinc-200/50 text-zinc-600 text-xs flex items-center gap-2">
+          <svg className="w-4 h-4 shrink-0 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span className="font-medium">Login to create custom short links.</span>
+        </div>
+      )}
 
       <button
         type="submit"
