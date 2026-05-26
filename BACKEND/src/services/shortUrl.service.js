@@ -58,6 +58,7 @@ export const createShortUrlWithUser = async (url, userId) => {
       existing = await findShortUrlByCode(shortUrl);
       if (!existing) {
          break;
+         
       }
       attempts++;
    }
