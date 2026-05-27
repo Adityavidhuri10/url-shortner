@@ -1,10 +1,18 @@
 import axios from "axios"
 
+// Determine if running on localhost using window.location.origin
+const isLocalhost = window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1");
+
+// Determine the active backend URL based on environment
+export const BACKEND_URL = isLocalhost
+    ? "http://localhost:3000"
+    : (import.meta.env.VITE_APP_URL || "https://url-shortner-2-pl2n.onrender.com");
+
 const axiosInstance = axios.create({
-    baseURL:"https://url-shortner-2-pl2n.onrender.com",
-    timeout:10000, //10s
-    withCredentials:true
-})
+    baseURL: BACKEND_URL,
+    timeout: 10000, // 10s
+    withCredentials: true
+});
 
 // Response interceptor
 axiosInstance.interceptors.response.use(

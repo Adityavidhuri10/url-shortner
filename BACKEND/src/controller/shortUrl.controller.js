@@ -35,9 +35,12 @@ export const createShortUrl = asyncHandler(async (req, res) => {
 
   const shortUrl = await createShortUrlWithSlug(url, customSlug, userId);
 
+  // Dynamically determine the base URL of the backend server
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get("host")}/`;
+
   res.status(201).json({
     success: true,
-    shortUrl: process.env.APP_URL + shortUrl.short_url,
+    shortUrl: baseUrl + shortUrl.short_url,
   });
 });
 
@@ -60,12 +63,15 @@ export const getUserUrls = asyncHandler(async (req, res) => {
 
   const urls = await findShortUrlsByUser(req.user._id);
 
+  // Dynamically determine the base URL of the backend server
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get("host")}/`;
+
   res.status(200).json({
     success: true,
     data: urls.map(url => ({
       _id: url._id,
       full_url: url.full_url,
-      shortUrl: process.env.APP_URL + url.short_url,
+      shortUrl: baseUrl + url.short_url,
       clicks: url.clicks,
       createdAt: url.createdAt
     }))
